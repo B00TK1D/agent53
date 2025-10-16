@@ -1,0 +1,48 @@
+# Agent53 DNS Server Configuration
+listen_addr: ":53"
+log_queries: true
+log_file: "dns-server.log"
+ttl: 60
+
+# Upstream DNS configuration
+upstream:
+  enabled: true
+  servers:
+    - "8.8.8.8"
+    - "1.1.1.1"
+  timeout: 5
+
+# Domains configured for DNS rebinding
+rebind_domains:
+  - "rebind.test"
+  - "evil.local"
+
+# Domain configurations
+domains:
+  test.local:
+    default_ip: "127.0.0.1"
+    rules:
+      - source_ip: "192.168.1.0/24"
+        target_ip: "192.168.1.100"
+      - source_ip: "10.0.0.0/8"
+        target_ip: "10.0.0.1"
+
+  malware.test:
+    default_ip: "127.0.0.1"
+    rules:
+      - source_ip: "192.168.1.50"
+        target_ip: "192.168.1.200"
+
+  rebind.test:
+    default_ip: "127.0.0.1"
+    rules:
+      - source_ip: "192.168.1.0/24"
+        target_ip: "169.254.169.254"
+
+  internal.company:
+    default_ip: "10.0.0.100"
+    rules:
+      - source_ip: "10.0.0.0/8"
+        target_ip: "10.0.0.100"
+      - source_ip: "192.168.1.0/24"
+        target_ip: "192.168.1.1"
